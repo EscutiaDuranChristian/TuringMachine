@@ -45,7 +45,7 @@ public static class TuringHelper
             cabezal = 3;
             cinta.InsertRange(0, refill);
         }
-        else if (cabezal > cinta.Count) cinta.AddRange(refill);
+        else if (cabezal >= cinta.Count) cinta.AddRange(refill);
     }
     public static void ResetTransitionInfo
         (ref char? write, ref char? dir, ref int? dest)

@@ -9,8 +9,9 @@ public class Turing
     private Cinta cinta = new Cinta();
     int cabezal = 0; 
     State? current = null, start = null;
-    char? write, dir;
-    int? dest;
+    char? write, dir, read = null;
+    int? dest, inicio = null, inicio2 = null;
+    string initialCinta = string.Empty;
 
     #region Build Turing machine
 
@@ -41,7 +42,12 @@ public class Turing
     }
     public void RemoveTransition(int idFrom, int idTo, char read) =>
         states[idFrom].RemoveTransition(idTo, read);
-    public void SetStarterState(int id) => start = states[id];
+    public void SetStarterState(int id)
+    {
+        start = states[id];
+        inicio = id;
+        inicio2 = inicio;
+    }
     public void SetAceptationState(int id) => states[id].SetAceptation(true);
     public void RemoveAceptationState(int id) => states[id].SetAceptation(false);
 
@@ -61,8 +67,8 @@ public class Turing
             cabezal = 4;
             cinta = [.. $"☐☐☐☐{input}☐☐☐☐"];
         }
-    public string GetCinta()
-        {
+    public string GetCintaCabezal()
+    {
             var result = new StringBuilder();
             for (int i = cabezal; i < cinta.Count; i++)
             {
@@ -70,18 +76,35 @@ public class Turing
                 result.Append(cinta[i]);
             }
             return "";
+    }
+    public string GetCinta()
+    {
+        var result = new StringBuilder();
+        for(int i = 0; i < cinta.Count; i++)
+        {
+            if (i == cabezal) 
+                result.Append('[').Append(cinta[i]).Append(']');
+            else result.Append(cinta[i]);
         }
+        return result.ToString();
+    }
     public string Step()
     {
+        initialCinta = GetCinta();
         if (current is null) return "Rejected";
         TuringHelper.ResetTransitionInfo(ref write, ref dir, ref dest);
         current.StartEvent(cinta[cabezal]);
         if(dir is null) return "Rejected";
+        inicio = inicio2;
+        read = cinta[cabezal];
         cinta[cabezal] = (char)write!;
         TuringHelper.MoveCabezal((char)dir, ref cabezal, ref cinta);
         current = states[(int)dest!];
+        inicio2 = dest;
         return "Acepted";
     }
+    public (int?, char?, char?, char?, int?, string) StepInfo() => 
+        (inicio, read, write, dir, dest, initialCinta);
     public string EvaluateInput(string input)
     {
         NewInput(input);
@@ -90,6 +113,6 @@ public class Turing
         cinta.Clear();
         return "Rejected";
     }
-
+    public int Actual() => current?.ID ?? 0;
     #endregion
 }
