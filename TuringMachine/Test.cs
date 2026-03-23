@@ -3,18 +3,18 @@
 public class Test
 {
     static char empty = '☐';
-    static string rutaIn = "C:\\Users\\MrSnow\\Documents\\Prueba\\In.txt";
-    static string rutaOut = "C:\\Users\\MrSnow\\Documents\\Prueba\\Out.txt";
     public static void Main(string[] args)
     {
         var option = new ConsoleKeyInfo();
         Turing machine = new Turing();
         MakeContador(ref machine);
         Console.WriteLine("A: Escribir caso. " +
-                          $"\nCualquier otra tecla: Evaluar casos en {rutaIn}");
+                          $"\nCualquier otra tecla: Evaluar varios casos");
         option = Console.ReadKey(true);
+        Console.Clear();
         if (option.Key == ConsoleKey.A)
         {
+            Console.WriteLine("Ingrese cadena a validar paso a paso");
             string input = Console.ReadLine()!;
             machine.NewInput(input);
             Console.WriteLine("Inicio:\tLectura:\tEscritura:\tCabezal Dir\tDestino\tCinta");
@@ -40,19 +40,20 @@ public class Test
         }
         else
         {
-            string cabezal = "Input:\tStatus:\tResult\n";
-            string[] input = File.ReadAllLines(rutaIn);
-            List<string> result = new List<string>();
-            result.Add(cabezal);
-            foreach (var inp in input)
+            Console.WriteLine("Ingresa 0 para evaluar");
+            string cabezal = "\nInput:\t\tStatus:\t\tResult\n";
+            string? inp;
+            List<string> output = new List<string>();
+            output.Add(cabezal);
+            output.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            while ((inp = Console.ReadLine()!) != "0")
             {
                 string add = $"{inp}\t\t" +
-                             $"{machine.EvaluateInput(inp)}\t\t" +
-                             $"{machine.GetCintaCabezal()}";
-                result.Add(add);
+                                  $"{machine.EvaluateInput(inp)}\t\t" +
+                                  $"{machine.GetCintaCabezal()}";
+                output.Add(add);
             }
-            File.WriteAllLines(rutaOut, result);
-            Console.WriteLine($"Resultados guardados en: {rutaOut}");
+            Console.WriteLine(string.Join("\n", output));
         }
     }
 
