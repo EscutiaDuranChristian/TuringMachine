@@ -3,18 +3,33 @@
 public class Test
 {
     static char empty = '☐';
+    delegate void Operacion(ref Turing machine);
+
+    static Operacion[] Machines = { 
+        Contador.BuiltIn,
+        Multiplicador.BuiltIn,
+        Divisor.BuiltIn,
+    };
+    static string[] Examples =
+    {
+        "3=",
+        "1x1=",
+        "1/1="
+    };
     public static void Main(string[] args)
     {
         var option = new ConsoleKeyInfo();
         Turing machine = new Turing();
 
-        //Contador.BuiltIn(ref machine);
-        //Multiplicador.BuiltIn(ref machine);
-        Divisor.BuiltIn(ref machine);
+        Console.WriteLine("Elegir una maquina: 0.Contador. 1.Multiplicador 2.Divisor");
+        if (int.TryParse(Console.ReadLine()!, out int x) && x >= 0 && x < Machines.Length)
+            Machines[x](ref machine);
+
         Console.WriteLine("A: Escribir caso. " +
                           $"\nCualquier otra tecla: Evaluar varios casos");
         option = Console.ReadKey(true);
         Console.Clear();
+        Console.WriteLine($"Ejemplo: {Examples[x]}");
         if (option.Key == ConsoleKey.A)
         {
             Console.WriteLine("Ingrese cadena a validar paso a paso");
